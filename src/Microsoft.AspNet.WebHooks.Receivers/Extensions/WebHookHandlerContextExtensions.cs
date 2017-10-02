@@ -16,7 +16,7 @@ namespace Microsoft.AspNet.WebHooks
     public static class WebHookHandlerContextExtensions
     {
         /// <summary>
-        /// Gets the <see cref="WebHookHandlerContext.Data"/> property as type <typeparamref name="T"/>. If the 
+        /// Gets the <see cref="WebHookHandlerContext.Data"/> property as type <typeparamref name="T"/>. If the
         /// contents is not of type <typeparamref name="T"/> then <c>null</c> is returned.
         /// </summary>
         /// <typeparam name="T">The type to convert <see cref="WebHookHandlerContext.Data"/> to.</typeparam>
@@ -30,8 +30,10 @@ namespace Microsoft.AspNet.WebHooks
                 return default(T);
             }
 
-            if (context.Data is JToken && !typeof(JToken).IsAssignableFrom(typeof(T)))
+            if (context.Data is JToken && !typeof(T).IsAssignableFrom(context.Data.GetType()))
             {
+                // context.Data is a JToken and the caller isn't just asking for (say) the current JObject.
+                // Do explicit conversion.
                 try
                 {
                     T data = ((JToken)context.Data).ToObject<T>();
